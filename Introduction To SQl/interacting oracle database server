@@ -1,0 +1,36 @@
+SET SERVEROUTPUT ON;
+
+DECLARE
+    v_empno      emp.empno%TYPE := &enter_empno;
+    v_ename      emp.ename%TYPE;
+    v_sal        emp.sal%TYPE;
+    v_comm       emp.comm%TYPE;
+    v_gross_sal  NUMBER(10, 2);
+    v_deductions NUMBER(10, 2);
+    v_net_sal    NUMBER(10, 2);
+BEGIN
+    SELECT ename, sal, NVL(comm, 0)
+    INTO v_ename, v_sal, v_comm
+    FROM emp
+    WHERE empno = v_empno;
+
+    v_gross_sal  := v_sal + v_comm;
+    v_deductions := v_sal * 0.10;
+    v_net_sal    := v_gross_sal - v_deductions;
+
+    DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+    DBMS_OUTPUT.PUT_LINE('Employee ID   : ' || v_empno);
+    DBMS_OUTPUT.PUT_LINE('Employee Name : ' || v_ename);
+    DBMS_OUTPUT.PUT_LINE('Base Salary   : ' || TO_CHAR(v_sal, '$99,990.00'));
+    DBMS_OUTPUT.PUT_LINE('Commission    : ' || TO_CHAR(v_comm, '$99,990.00'));
+    DBMS_OUTPUT.PUT_LINE('Deductions    : ' || TO_CHAR(v_deductions, '$99,990.00'));
+    DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+    DBMS_OUTPUT.PUT_LINE('Net Salary    : ' || TO_CHAR(v_net_sal, '$99,990.00'));
+    DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Error: No employee found with ID ' || v_empno);
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END;
+/
